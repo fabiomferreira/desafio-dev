@@ -3,7 +3,7 @@ const multer = require('multer');
 
 const bodyParser = require('body-parser');
 const storage = multer.memoryStorage()
-const upload =  multer({storage}).single('upload_file');
+const upload = multer({ storage }).single('upload_file');
 const app = express();
 const port = 3000;
 
@@ -18,17 +18,17 @@ router.get('/', (req, res) => {
 	res.send('API is working!')
 })
 
-const formatDate = (text) => 
-	`${text.slice(0,4)}-${text.slice(4,6)}-${text.slice(6,8)}`
+const formatDate = (text) =>
+	`${text.slice(0, 4)}-${text.slice(4, 6)}-${text.slice(6, 8)}`
 
-const formatValue = text => (parseInt(text)/100).toFixed(2)
+const formatValue = text => parseFloat((parseInt(text) / 100).toFixed(2))
 
-const formatTime = text => `${text.slice(0,2)}:${text.slice(2,4)}:${text.slice(4,6)}`
+const formatTime = text => `${text.slice(0, 2)}:${text.slice(2, 4)}:${text.slice(4, 6)}`
 
 const handleTransactions = (fileText) => {
 	const fileLines = fileText.split('\n').slice(0, -1);
 	return fileLines.map(line => ({
-		transaction_type: line.slice(0,1),
+		transaction_type: line.slice(0, 1),
 		transaction_date: formatDate(line.slice(1, 9)),
 		transaction_value: formatValue(line.slice(9, 19)),
 		cpf: line.slice(19, 30),
@@ -53,13 +53,29 @@ const updateTransactions = transactions => {
 		}
 	})
 }
+const expenses = ['2', '3', '9']
+
+const calculateTransactions = (valueOne, valueTwo, type) => {
+	return expenses.includes(type) ? valueOne - valueTwo : valueOne + valueTwo;
+}
+
+const calculateTotal = transactions => {
+	return transactions.reduce((calcSoFar, transaction) => {
+		const valueSoFar = typeof calcSoFar === 'object' ? calcSoFar.transaction_value : calcSoFar;
+		return calculateTransactions(
+			valueSoFar,
+			transaction.transaction_value,
+			transaction.transaction_type
+		)
+	})
+}
 
 router.post('/uploadFile/', upload, (req, res) => {
-	const {file} = req;
+	const { file } = req;
 	const buffer = Buffer.from(file.buffer);
 	const transactions = handleTransactions(buffer.toString());
 	updateTransactions(transactions);
-	res.send(transactions);
+	res.send({total: calculateTotal(transactions), transactions});
 })
 
 app.use(bodyParser.urlencoded({
