@@ -30,12 +30,20 @@ services:
     restart: unless-stopped
     working_dir: /home/node/app
     environment:
-      - NODE_ENV=production
+      PGUSER: postgres
+      PGHOST: postgres
+      PGDATABASE: postgres
+      PGPASSWORD: postgres
+      PGPORT: 5432
     volumes:
       - ./:/home/node/app
     command: "npm start"
+    networks:
+    - postgres
     ports:
       - 3000:3000
+    depends_on:
+      - postgres
 
 networks:
   postgres:

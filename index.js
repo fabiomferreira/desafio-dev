@@ -7,6 +7,10 @@ const upload =  multer({storage}).single('upload_file');
 const app = express();
 const port = 3000;
 
+const { Client } = require('pg')
+const client = new Client()
+client.connect()
+
 const router = express.Router();
 
 
@@ -22,24 +26,39 @@ const formatValue = text => (parseInt(text)/100).toFixed(2)
 const formatTime = text => `${text.slice(0,2)}:${text.slice(2,4)}:${text.slice(4,6)}`
 
 const handleTransactions = (fileText) => {
-	const fileLines = fileText.split('\n');
-	console.log(fileLines[0])
+	const fileLines = fileText.split('\n').slice(0, -1);
 	return fileLines.map(line => ({
-		type: line.slice(0,1),
-		date: formatDate(line.slice(1, 10)),
-		value: formatValue(line.slice(9, 20)),
-		cpf: line.slice(19, 31),
-		card: line.slice(30, 42),
-		time: formatTime(line.slice(42, 48)),
-		owner: line.slice(48, 62).trim(),
-		store: line.slice(62, 82).trim(),
+		transaction_type: line.slice(0,1),
+		transaction_date: formatDate(line.slice(1, 9)),
+		transaction_value: formatValue(line.slice(9, 19)),
+		cpf: line.slice(19, 30),
+		card_number: line.slice(30, 42),
+		transaction_time: formatTime(line.slice(42, 48)),
+		store_owner: line.slice(48, 62).trim(),
+		store_name: line.slice(62, 82).trim(),
 	}));
+}
+
+const updateTransactions = transactions => {
+	const query = `
+		INSERT INTO transactions(${Object.keys(transactions[0]).toString()})
+		VALUES
+		${transactions.map(transaction => `(${Object.values(transaction).map(value => `'${value}'`)})`)};
+	`
+	client.query(query, (err, res) => {
+		if (err) {
+			console.log(err.stack)
+		} else {
+			console.log(res.rows[0])
+		}
+	})
 }
 
 router.post('/uploadFile/', upload, (req, res) => {
 	const {file} = req;
 	const buffer = Buffer.from(file.buffer);
 	const transactions = handleTransactions(buffer.toString());
+	updateTransactions(transactions);
 	res.send(transactions);
 })
 
