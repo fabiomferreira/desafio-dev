@@ -39,20 +39,39 @@ const handleTransactions = (fileText) => {
 	}));
 }
 
-const updateTransactions = transactions => {
+const retrieveTransactions = () => {
+	return new Promise((resolve, reject) => {
+		client.query('SELECT * FROM transactions;', (err, res) => {
+			if (err) {
+				reject({ error: err.stack });
+			} else {
+				resolve(res.rows)
+			}
+		})
+	})
+}
+
+const updateTransactions = async transactions => {
 	const query = `
 		INSERT INTO transactions(${Object.keys(transactions[0]).toString()})
 		VALUES
-		${transactions.map(transaction => `(${Object.values(transaction).map(value => `'${value}'`)})`)};
-	`
-	client.query(query, (err, res) => {
-		if (err) {
-			console.log(err.stack)
-		} else {
-			console.log(res.rows[0])
-		}
+		${transactions.map(transaction => `(${Object.values(transaction).map(value => `'${value}'`)})`)}
+		RETURNING *;
+	`;
+
+	return new Promise((resolve, reject) => {
+
+		client.query(query, async (err) => {
+			if (err) {
+				reject({ error: err.stack });
+			} else {
+				const results = await retrieveTransactions()
+				resolve(results);
+			}
+		})
 	})
 }
+
 const expenses = ['2', '3', '9']
 
 const calculateTransactions = (valueOne, valueTwo, type) => {
@@ -63,19 +82,20 @@ const calculateTotal = transactions => {
 	return transactions.reduce((calcSoFar, transaction) => {
 		const valueSoFar = typeof calcSoFar === 'object' ? calcSoFar.transaction_value : calcSoFar;
 		return calculateTransactions(
-			valueSoFar,
-			transaction.transaction_value,
+			parseFloat(valueSoFar),
+			parseFloat(transaction.transaction_value),
 			transaction.transaction_type
 		)
 	})
 }
 
-router.post('/uploadFile/', upload, (req, res) => {
+router.post('/uploadFile/', upload, async (req, res) => {
 	const { file } = req;
 	const buffer = Buffer.from(file.buffer);
 	const transactions = handleTransactions(buffer.toString());
-	updateTransactions(transactions);
-	res.send({total: calculateTotal(transactions), transactions});
+	const allTransactions = await updateTransactions(transactions);
+
+	res.send({ total: calculateTotal(allTransactions), transactions: allTransactions });
 })
 
 app.use(bodyParser.urlencoded({
