@@ -98,6 +98,12 @@ router.post('/uploadFile/', upload, async (req, res) => {
 	res.send({ total: calculateTotal(allTransactions), transactions: allTransactions });
 })
 
+router.get('/transactions', async (req, res) => {
+	const transactions = await retrieveTransactions();
+
+	res.send({ total: calculateTotal(transactions), transactions: transactions });
+});
+
 app.use(bodyParser.urlencoded({
 	extended: false
 }));
