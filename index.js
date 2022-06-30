@@ -1,6 +1,6 @@
 const express = require('express');
 const multer = require('multer');
-
+const path = require('path');
 const bodyParser = require('body-parser');
 const storage = multer.memoryStorage()
 const upload = multer({ storage }).single('upload_file');
@@ -104,12 +104,18 @@ router.get('/transactions', async (req, res) => {
 	res.send({ total: calculateTotal(transactions), transactions: transactions });
 });
 
+app.use(express.static(path.resolve(__dirname, './client')));
 app.use(bodyParser.urlencoded({
 	extended: false
 }));
 
 app.use(bodyParser.json());
 app.use('/v1', router);
+
+// All other GET requests not handled before will return our React app
+app.get('*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, './client', 'index.html'));
+});
 
 app.listen(port, () => {
 	console.log(`Server listening on port ${port}`)
