@@ -114,3 +114,10 @@ app.use('/v1', router);
 app.listen(port, () => {
 	console.log(`Server listening on port ${port}`)
 })
+
+module.exports = {
+	formatDate,
+	formatTime,
+	formatValue, 
+	client
+}
