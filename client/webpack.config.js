@@ -10,6 +10,24 @@ module.exports = {
 				exclude: /node_modules/,
 				use: ["babel-loader"],
 			},
+			{
+        test: /\.(sass|css|scss)$/,
+        use: [
+          'style-loader',
+          'css-loader',
+          {
+            loader: "postcss-loader",
+            options: {
+							postcssOptions: {
+								plugins: () => [
+									require("autoprefixer")()
+								],
+							}
+            },
+          },
+          'sass-loader',
+        ]
+      },
 		],
 	},
 	resolve: {
@@ -22,10 +40,10 @@ module.exports = {
 	plugins: [new webpack.HotModuleReplacementPlugin()],
 	devServer: {
 		static: './dist',
-		// contentBase: path.join(__dirname, 'dist'),
 		proxy: {
 			'/v1': {
 				target: 'http://localhost:3001',
+				secure: false,
 				changeOrigin: true,
 			},
 		}

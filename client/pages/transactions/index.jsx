@@ -1,7 +1,8 @@
 import React, {useState} from 'react';
 import TransactionForm from '../../components/TransactionForm';
 import TransactionList from '../../components/TransactionList';
-import {TransactionsContext} from './context'
+import {TransactionsContext} from './context';
+import Container from 'react-bootstrap/Container'
 
 const Transactions = () => {
 	const [transactions, setTransactions] = useState([]);
@@ -12,8 +13,11 @@ const Transactions = () => {
 	}
 	return (
 		<TransactionsContext.Provider value={value}>
-			<TransactionForm />
-			<TransactionList />
+			<Container>
+				<h1>CNAB Parser</h1>
+				<TransactionForm />
+				<TransactionList />
+			</Container>
 		</TransactionsContext.Provider>
 	)
 }

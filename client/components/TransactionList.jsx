@@ -1,5 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import { TransactionsContext } from '../pages/transactions/context';
+import Table from 'react-bootstrap/Table';
 
 const types = [
 	'Débito',
@@ -30,7 +31,7 @@ const TransactionList = () => {
 				!transactions.length || (
 					<>
 						<span>Total: {moneyFormatter.format(total)} </span>
-						<table>
+						<Table striped bordered>
 							<thead>
 								<th>Data</th>
 								<th>Hora</th>
@@ -55,7 +56,7 @@ const TransactionList = () => {
 									</tr>
 								))}
 							</tbody>
-						</table>
+						</Table>
 					</>
 				)
 			}

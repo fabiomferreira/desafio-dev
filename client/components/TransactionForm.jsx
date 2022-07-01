@@ -1,6 +1,12 @@
 
 import React, {useState, useContext} from 'react';
-import {TransactionsContext} from '../pages/transactions/context'
+import {TransactionsContext} from '../pages/transactions/context';
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import FormGroup from 'react-bootstrap/FormGroup';
+import FormControl from 'react-bootstrap/FormControl';
+import Row from 'react-bootstrap/Row'
+import Col from 'react-bootstrap/Col'
 
 const TransactionForm = () => {
 	const [file, setFile] = useState(null)
@@ -25,10 +31,18 @@ const TransactionForm = () => {
 	}
 
 	return (
-		<form onSubmit={handleSubmit}>
-			<input id="file" type="file" name="upload_file" onChange={handleFileChange}/>
-			<button disabled={!file} type="submit" required>Enviar</button>
-		</form>
+		<Form onSubmit={handleSubmit} className="mb-3">
+			<Row>
+				<Col xs="6">
+					<FormGroup>
+						<FormControl id="file" type="file" name="upload_file" onChange={handleFileChange}/>
+					</FormGroup>
+				</Col>
+				<Col xs="6" sm="2">
+					<Button disabled={!file} type="submit" required>Enviar</Button>
+				</Col>
+			</Row>
+		</Form>
 	)
 }
 
