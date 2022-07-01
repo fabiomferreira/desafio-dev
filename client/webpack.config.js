@@ -21,12 +21,13 @@ module.exports = {
 	},
 	plugins: [new webpack.HotModuleReplacementPlugin()],
 	devServer: {
-		static: './',
+		static: './dist',
+		// contentBase: path.join(__dirname, 'dist'),
 		proxy: {
-      '/v1': {
-        target: 'http://localhost:3000',
-        pathRewrite: { '^/v1': '' },
-      },
-    },
+			'/v1': {
+				target: 'http://localhost:3001',
+				changeOrigin: true,
+			},
+		}
 	},
 };

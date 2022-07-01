@@ -1,10 +1,11 @@
 import React from 'react'
+import Transactions from '../pages/Transactions'
 
 const App = () => {
   return (
-    <h1>
-     Create React App Without CRA ☘️
-    </h1>
+    <>
+      <Transactions />
+    </>
   )
 }
 

@@ -48,10 +48,24 @@ services:
     networks:
     - postgres
     ports:
-      - 3000:3000
+      - 3001:3001
     depends_on:
       postgres:
         condition: service_healthy
+  
+  client:
+    image: node:16
+    restart: unless-stopped
+    working_dir: /home/node/client
+    volumes:
+      - ./client:/home/node/client
+    command: "npm start"
+    networks:
+    - postgres
+    ports:
+      - 3000:3000
+    depends_on:
+      - api
 
 networks:
   postgres:
