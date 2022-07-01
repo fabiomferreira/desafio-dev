@@ -1,18 +1,27 @@
 
-import React from 'react';
+import React, {useState} from 'react';
 
 const TransactionForm = () => {
+	const [file, setFile] = useState(null)
 
-	const handleSubmit = (event) => {
+	const handleSubmit = async (event) => {
 		event.preventDefault();
-		fetch('/v1/transactions')
-			.then(res => res.json())
-			.then(res => console.log('transactions', res))
+		if(!file) return false;
+		const formData  = new FormData();
+		formData.append('upload_file', file);
+		const response = await fetch('/v1/uploadFile', {method: 'POST', body: formData})
+		const data = await response.json()
+		console.log(data)
 	}
+
+	const handleFileChange = event => {
+		setFile(event.target.files[0]);
+	}
+
 	return (
 		<form onSubmit={handleSubmit}>
-			<input type="file" />
-			<button type="submit">Send</button>
+			<input id="file" type="file" name="upload_file" onChange={handleFileChange}/>
+			<button type="submit" required>Send</button>
 		</form>
 	)
 }
