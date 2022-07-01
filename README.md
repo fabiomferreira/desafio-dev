@@ -1,3 +1,14 @@
+# Como rodar
+## Instalando as dependências
+1. Execute ```npm i```
+2. Entre na pasta client: ```cd client```;
+3. Execute ```npm i```
+
+## Rode os containers
+```docker-compose up -d```
+
+
+Readme original abaixo...
 # Desafio programação - para vaga desenvolvedor
 
 Por favor leiam este documento do começo ao fim, com muita atenção.
