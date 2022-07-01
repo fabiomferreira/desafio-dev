@@ -42,7 +42,11 @@ module.exports = {
 		static: './dist',
 		proxy: {
 			'/v1': {
-				target: 'http://localhost:3001',
+				target: {
+          host: "api",
+          protocol: 'http:',
+          port: 3001
+        },
 				secure: false,
 				changeOrigin: true,
 			},

@@ -79,6 +79,8 @@ const calculateTransactions = (valueOne, valueTwo, type) => {
 }
 
 const calculateTotal = transactions => {
+	if(!transactions.length) return 0;
+
 	return transactions.reduce((calcSoFar, transaction) => {
 		const valueSoFar = typeof calcSoFar === 'object' ? calcSoFar.transaction_value : calcSoFar;
 		return calculateTransactions(
