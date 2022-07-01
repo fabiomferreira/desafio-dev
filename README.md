@@ -9,7 +9,7 @@
 
 # Acessando a aplicação
 - Client: ```http://localhost:3000```
-- Server: ```http://localhost:30001``` (há um proxy do client para o server para acessar a api)
+- Server: ```http://localhost:3001``` (há um proxy do client para o server para acessar a api)
 
 # API
 GET /transactions - Retorna todas as transações previamente salvas no banco de dados
