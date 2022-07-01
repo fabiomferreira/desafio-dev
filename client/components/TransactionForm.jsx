@@ -16,6 +16,8 @@ const TransactionForm = () => {
 		const {transactions, total} = data;
 		setTransactions(transactions);
 		setTotal(total);
+		document.getElementById('file').value = "";
+		setFile(null);
 	}
 
 	const handleFileChange = event => {
@@ -25,7 +27,7 @@ const TransactionForm = () => {
 	return (
 		<form onSubmit={handleSubmit}>
 			<input id="file" type="file" name="upload_file" onChange={handleFileChange}/>
-			<button type="submit" required>Send</button>
+			<button disabled={!file} type="submit" required>Enviar</button>
 		</form>
 	)
 }
