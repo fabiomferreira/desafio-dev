@@ -1,8 +1,10 @@
 
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
+import {TransactionsContext} from '../pages/transactions/context'
 
 const TransactionForm = () => {
 	const [file, setFile] = useState(null)
+	const {setTransactions, setTotal} = useContext(TransactionsContext);
 
 	const handleSubmit = async (event) => {
 		event.preventDefault();
@@ -11,7 +13,9 @@ const TransactionForm = () => {
 		formData.append('upload_file', file);
 		const response = await fetch('/v1/uploadFile', {method: 'POST', body: formData})
 		const data = await response.json()
-		console.log(data)
+		const {transactions, total} = data;
+		setTransactions(transactions);
+		setTotal(total);
 	}
 
 	const handleFileChange = event => {
